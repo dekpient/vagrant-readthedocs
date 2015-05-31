@@ -1,0 +1,4 @@
+puppet/modules
+.vagrant
+.tmp/
+id_rsa.pub

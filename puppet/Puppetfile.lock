@@ -1,0 +1,16 @@
+FORGE
+  remote: https://forge.puppetlabs.com
+  specs:
+    maestrodev-ssh_keygen (1.2.0)
+    puppetlabs-firewall (1.6.0)
+    puppetlabs-stdlib (4.6.0)
+    puppetlabs-vcsrepo (1.3.0)
+    stankevich-python (1.9.4)
+      puppetlabs-stdlib (>= 4.0.0)
+
+DEPENDENCIES
+  maestrodev-ssh_keygen (>= 0)
+  puppetlabs-firewall (>= 0)
+  puppetlabs-vcsrepo (>= 0)
+  stankevich-python (>= 0)
+

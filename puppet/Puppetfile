@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+#^syntax detection
+
+forge "https://forge.puppetlabs.com"
+
+mod 'stankevich-python'
+mod 'puppetlabs-vcsrepo'
+mod 'puppetlabs-firewall'
+mod 'maestrodev-ssh_keygen'
