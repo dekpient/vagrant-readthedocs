@@ -21,7 +21,7 @@ command = <%= @venv %>/bin/python manage.py runserver 0.0.0.0:<%= @port %>
 autostart = true
 autorestart = true
 startretries = 3
-redirect_stderr = true
+redirect_stderr = true								; rtd logs to stderr - weird
 stderr_logfile = /home/<%= @user %>/rtd.err.log
-stdout_logfile = /home/<%= @user %>/rtd.out.log
+stdout_logfile = /home/<%= @user %>/rtd.out.log		; would be empty if not redirect_stderr
 user = <%= @user %>
