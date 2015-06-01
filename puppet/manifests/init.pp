@@ -1,18 +1,28 @@
+# modify to your heart's content
+$dir = '/opt/readthedocs'
+$reset_db = false
+$ssh = false
+$connect_port = 7999
+$connect_host = 'stash'
+
+# not so safe to change, but you can try
+$port = 8000 # hell, it MUST be this port for rtd to build stuff!!
+$supervisor_port = 9001
+$user = 'vagrant'
+$group = 'vagrant'
+
+# should not change
 $libxml = 'libxml2-devel'
 $libxslt = 'libxslt-devel'
 $zlib = 'zlib-devel'
+$libyaml = 'libyaml-devel'
 $supervisor_service = 'supervisord'
 $supervisor_config = '/etc/supervisord.conf'
-$pkgs = [ 'git', 'supervisor', $libxml, $libxslt, $zlib, 'epel-release' ]
-$user = 'vagrant'
-$group = 'vagrant'
-$dir = '/opt/readthedocs'
+$pkgs = [ 'git', 'supervisor', $libxml, $libxslt, $zlib, $libyaml, 'epel-release' ]
 $venv = "$dir/venv"
 $vbin = "$venv/bin/:/usr/bin/:/bin/"
 $checkouts = "$dir/checkouts"
 $working_dir = "$checkouts/readthedocs"
-$port = 8000 # hell, it MUST be this port!!
-$supervisor_port = 9001
 
 Package {
   allow_virtual => false,
@@ -31,12 +41,22 @@ package { $pkgs :
   ensure => installed,
 }
 
-ssh_keygen { $user :
-  comment => 'vagrant@readthedocs',
-} ->
-file { '/vagrant/id_rsa.pub' :
-  ensure => present,
-  source => "/home/$user/.ssh/id_rsa.pub",
+if $ssh {
+  ssh_keygen { $user :
+    comment => 'vagrant@readthedocs',
+  } ->
+  file { '/vagrant/id_rsa.pub' :
+    ensure => present,
+    source => "/home/$user/.ssh/id_rsa.pub",
+  }
+
+  exec { "adding $connect_host to known_hosts" :
+    command => "ssh-keyscan -p $connect_port $connect_host >> ~/.ssh/known_hosts",
+    user    => $user,
+    group   => $group,
+    path    => $vbin,
+    onlyif  => 'test ! -e ~/.ssh/known_hosts',
+  }
 }
 
 class { 'python' :
@@ -45,6 +65,16 @@ class { 'python' :
   dev        => true,
   virtualenv => true,
   require    => Package['epel-release'],
+} ->
+exec { 'upgrade_pip' :
+  command => 'pip install --upgrade pip',
+  user    => 'root',
+  path    => $vbin,
+} ->
+exec { 'upgrade_virtualenv' :
+  command => 'pip install --upgrade virtualenv',
+  user    => 'root',
+  path    => $vbin,
 }
 
 file { [$dir, $checkouts] :
@@ -73,11 +103,13 @@ python::virtualenv { $venv :
   group        => $group,
   requirements => "$checkouts/requirements.txt",
   timeout      => 3600,
-  require      => [ 
+  require      => [
+    Exec['upgrade_virtualenv'],
     Vcsrepo['rtd'], 
     Package[$libxml], 
     Package[$libxslt], 
-    Package[$zlib]
+    Package[$zlib],
+    Package[$libyaml],
   ],
 }
 
@@ -85,7 +117,7 @@ rtd::database { 'prepare' :
   dir     => $working_dir,
   user    => $user,
   path    => $vbin,
-  clean   => false,
+  clean   => $reset_db,
   require => Python::Virtualenv[$venv],
 }
 
