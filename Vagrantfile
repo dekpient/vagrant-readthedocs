@@ -11,6 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.box = "puppetlabs/centos-7.0-64-puppet"
+  # config.vm.box = "puppetlabs/ubuntu-14.04-64-puppet"
   config.vm.hostname = "readthedocs"
   config.vm.network "forwarded_port", guest: 8088, host: 8088
   config.vm.network "forwarded_port", guest: 9001, host: 9001
@@ -30,7 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     puppet.manifests_path = "puppet/manifests"
     puppet.manifest_file  = "init.pp"
     puppet.module_path = ["puppet/modules", "local_modules"]
-    puppet.options = "--verbose --debug"
+    # puppet.options = "--verbose --debug"
   end
 
 end

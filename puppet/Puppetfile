@@ -6,4 +6,5 @@ forge "https://forge.puppetlabs.com"
 mod 'stankevich-python'
 mod 'puppetlabs-vcsrepo'
 mod 'puppetlabs-firewall'
+mod 'crayfishx-firewalld'
 mod 'maestrodev-ssh_keygen'

@@ -1,6 +1,7 @@
 FORGE
   remote: https://forge.puppetlabs.com
   specs:
+    crayfishx-firewalld (1.0.0)
     maestrodev-ssh_keygen (1.2.0)
     puppetlabs-firewall (1.6.0)
     puppetlabs-stdlib (4.6.0)
@@ -9,6 +10,7 @@ FORGE
       puppetlabs-stdlib (>= 4.0.0)
 
 DEPENDENCIES
+  crayfishx-firewalld (>= 0)
   maestrodev-ssh_keygen (>= 0)
   puppetlabs-firewall (>= 0)
   puppetlabs-vcsrepo (>= 0)

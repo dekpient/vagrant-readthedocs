@@ -8,7 +8,6 @@ logfile_backups = 10
 loglevel = info
 pidfile = <%= @dir %>/supervisord.pid
 nodaemon = false
-user = <%= @user %>
 
 [supervisorctl]
 serverurl = http://localhost:<%= @supervisor_port %>
