@@ -14,3 +14,6 @@
 - Installing Read the Docs's requirements takes a while - \*staring at\* `Python::Requirements`
 - Read the Docs is run as `vagrant` user
 - RTD has `ALLOW_PRIVATE_REPO = True`
+
+### Reset Database
+Look for `rtd::database` in `init.pp` and set `clean => true`, then run `vagrant provision`. Don't forget to change it back.

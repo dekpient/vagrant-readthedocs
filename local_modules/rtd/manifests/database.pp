@@ -1,6 +1,7 @@
 # Define: database
 # Parameters:
 # $dir
+# $clean
 # $user
 # $path
 # $admin

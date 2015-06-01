@@ -1,21 +1,9 @@
-case $operatingsystem {
-  /^(Debian|Ubuntu)$/ : { 
-    $libxml = 'libxml2-dev'
-    $libxslt = 'libxslt1-dev'
-    $zlib = 'zlib1g-dev'
-    $supervisor_service = 'supervisor'
-    $supervisor_config = '/etc/supervisor/supervisord.conf'
-    $pkgs = [ 'git', 'supervisor', 'build-essential', $libxml, $libxslt, $zlib, 'sqlite3' ] 
-  }
-  'RedHat', 'CentOS'  : {
-    $libxml = 'libxml2-devel'
-    $libxslt = 'libxslt-devel'
-    $zlib = 'zlib-devel'
-    $supervisor_service = 'supervisord'
-    $supervisor_config = '/etc/supervisord.conf'
-    $pkgs = [ 'git', 'supervisor', $libxml, $libxslt, $zlib, 'epel-release' ] 
-  }
-}
+$libxml = 'libxml2-devel'
+$libxslt = 'libxslt-devel'
+$zlib = 'zlib-devel'
+$supervisor_service = 'supervisord'
+$supervisor_config = '/etc/supervisord.conf'
+$pkgs = [ 'git', 'supervisor', $libxml, $libxslt, $zlib, 'epel-release' ]
 $user = 'vagrant'
 $group = 'vagrant'
 $dir = '/opt/readthedocs'
@@ -26,19 +14,8 @@ $working_dir = "$checkouts/readthedocs"
 $port = 8000
 $supervisor_port = 9001
 
-if $operatingsystem =~ /^(Debian|Ubuntu)$/ {
-  exec { 'apt-get update' :
-    path => '/usr/bin/',
-  }
-
-  Package {
-    allow_virtual => false,
-    require => Exec['apt-get update'],
-  }
-} else {
-  Package {
-    allow_virtual => false,
-  }
+Package {
+  allow_virtual => false,
 }
 
 File {
@@ -62,25 +39,12 @@ file { '/vagrant/id_rsa.pub' :
   source => "/home/$user/.ssh/id_rsa.pub",
 }
 
-case $operatingsystem {
-  /^(Debian|Ubuntu)$/ : { 
-    class { 'python' :
-      version    => 'system',
-      pip        => true,
-      dev        => true,
-      virtualenv => true,
-      require    => Package['sqlite3'],  # a workaround, ubuntu only - rtd::database requires it
-    } 
-  }
-  'RedHat', 'CentOS'  : { 
-    class { 'python' :
-      version    => 'system',
-      pip        => true,
-      dev        => true,
-      virtualenv => true,
-      require    => Package['epel-release'],
-    } 
-  }
+class { 'python' :
+  version    => 'system',
+  pip        => true,
+  dev        => true,
+  virtualenv => true,
+  require    => Package['epel-release'],
 }
 
 file { [$dir, $checkouts] :
@@ -138,38 +102,23 @@ service { $supervisor_service :
   enable => true,
 }
 
-# firewall
-case $operatingsystem {
-  'RedHat', 'CentOS': {
-    # I do not deny...
-    Firewalld_rich_rule {
-      ensure => present,
-      zone   => 'public',
-      action => 'accept',
-    }
+# I do not deny...
+Firewalld_rich_rule {
+  ensure => present,
+  zone   => 'public',
+  action => 'accept',
+}
 
-    firewalld_rich_rule { 'allow rtd access in public zone':
-      port => {
-        'port'     => $port,
-        'protocol' => 'tcp',
-      },
-    }
+firewalld_rich_rule { 'allow rtd access in public zone':
+  port => {
+    'port'     => $port,
+    'protocol' => 'tcp',
+  },
+}
 
-    firewalld_rich_rule { 'allow supervisord access in public zone':
-      port => {
-        'port'     => $supervisor_port,
-        'protocol' => 'tcp',
-      },
-    }
-  }
-
-  default: {
-    include effing_firewall
-
-    firewall { "010 accept tcp access" :
-      port     => [ $port, $supervisor_port ],
-      proto    => tcp,
-      action   => accept,
-    }
-  }
+firewalld_rich_rule { 'allow supervisord access in public zone':
+  port => {
+    'port'     => $supervisor_port,
+    'protocol' => 'tcp',
+  },
 }
