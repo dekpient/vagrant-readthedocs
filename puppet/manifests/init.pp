@@ -11,7 +11,7 @@ $venv = "$dir/venv"
 $vbin = "$venv/bin/:/usr/bin/:/bin/"
 $checkouts = "$dir/checkouts"
 $working_dir = "$checkouts/readthedocs"
-$port = 8000
+$port = 8000 # hell, it MUST be this port!!
 $supervisor_port = 9001
 
 Package {

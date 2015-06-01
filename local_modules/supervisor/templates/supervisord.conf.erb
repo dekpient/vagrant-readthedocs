@@ -24,3 +24,4 @@ redirect_stderr = true								; rtd logs to stderr - weird
 stderr_logfile = /home/<%= @user %>/rtd.err.log
 stdout_logfile = /home/<%= @user %>/rtd.out.log		; would be empty if not redirect_stderr
 user = <%= @user %>
+stopasgroup = true  								; so child process is stopped
