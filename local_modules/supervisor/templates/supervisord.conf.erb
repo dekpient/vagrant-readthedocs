@@ -1,5 +1,5 @@
 [inet_http_server]
-port = *:<%= @supervisor_port %>
+port = 0.0.0.0:<%= @supervisor_port %>
 
 [supervisord]
 logfile = <%= @dir %>/supervisord.log
