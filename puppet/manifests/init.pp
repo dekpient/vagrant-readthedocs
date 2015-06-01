@@ -82,10 +82,11 @@ python::pip { 'supervisor' :
   require    => Python::Virtualenv[$venv],
 }
 
-rtd::setup { 'prepare' :
+rtd::database { 'prepare' :
   dir     => $working_dir,
   user    => $user,
   path    => $vbin,
+  clean   => false,
   require => Python::Virtualenv[$venv],
 }
 
